@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec babel-node ./src/app/serve.js",
+    "buildgame": ".\\node_modules\\.bin\\babel src\\game --out-dir public\\js\\game --source-maps",
+    "watchgame": "del .\\public\\js\\game\\*.* /s /q >NUL; && .\\node_modules\\.bin\\babel src\\game --out-dir public\\js\\game --watch --source-maps",
+    "buildapp": "del .\\build\\*.* /s /q >NUL; && .\\node_modules\\.bin\\babel src\\app --out-dir build --source-maps",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
