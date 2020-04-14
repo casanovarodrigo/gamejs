@@ -1,6 +1,7 @@
-import { CST } from "../CST";
-import { CharacterSprite } from "../CharacterSprite";
-import { Sprite } from "../Sprite";
+import { CST } from "../CST"
+import { CharacterSprite } from "../CharacterSprite"
+import { Sprite } from "../Sprite"
+import Client from "../Client"
 
 export class PlayScene extends Phaser.Scene {
     
@@ -11,12 +12,10 @@ export class PlayScene extends Phaser.Scene {
     }
 
     preload() {
-        // Echo.channel('enter-room')
-        //     .listen('EnterRoom', function(){
-        //         console.log('Novo usuário na sala');
-        //     });
-
-        // axios.get('event/enter').then((response) => console.log(response));
+        Client.askNewPlayer();
+        Client.socket.on('newplayer', (data) => {
+            console.log("outro usuário conectouuu", data)
+        })
 
         this.anims.create({
             key: "left",
