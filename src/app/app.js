@@ -4,7 +4,7 @@ import bodyParser from "body-parser"
 import morgan from 'morgan'
 import helmet from 'helmet'
 import path from 'path'
-import moduleAlias from "module-alias";
+import moduleAlias from "module-alias"
 
 
 const appPath = `./${process.env.NODE_ENV === 'production'? 'build' : 'src'}/app/`
@@ -27,6 +27,6 @@ app.use('/public', express.static(path.resolve('./public')))
 app.get('/', function (req, res) {
   const view = path.resolve(`./src/app/views/game.html`)
   res.sendFile(view)
-});
+})
 
 module.exports = app

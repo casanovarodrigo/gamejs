@@ -4,6 +4,6 @@ export default new class Client {
     }
 
     askNewPlayer(){
-        this.socket.emit('newplayer');
+        this.socket.emit('newplayer')
     }
 }
