@@ -6,4 +6,8 @@ export default new class Client {
     askNewPlayer(){
         this.socket.emit('newplayer')
     }
+    
+    sendClick(x, y){
+        this.socket.emit('click', { x, y})
+    }
 }

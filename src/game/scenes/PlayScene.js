@@ -24,9 +24,13 @@ export class PlayScene extends Phaser.Scene {
         })
 
         Client.socket.on('removeplayers', (idList) => {
-            console.log('saiu', idList)
             this.removePlayer(idList)
-        });
+        })
+        
+        Client.socket.on('movement', (player) => {
+            console.log('moveu', player)
+            this.movePlayer(player.id, player.x, player.y)
+        })
 
         this.anims.create({
             key: "left",
@@ -108,6 +112,26 @@ export class PlayScene extends Phaser.Scene {
         })
     }
 
+    moveClickEvent(worldX, worldY){
+        Client.sendClick(worldX, worldY)
+    }
+    
+    movePlayer(id, x, y){
+        let player = this.playerMap[id]
+        let distance = Phaser.Math.Between(player.x, player.y, x, y)
+        let duration = distance * 5
+        // #1 Bug - distance traveled
+        // console.log(distance, duration)
+        this.tweens.add({
+            targets: player,
+            x: x,
+            y: y,
+            duration: duration,
+            ease: 'elastic',
+            delay: 100
+        })
+    }
+
     create() {
         this.player = this.add.container(200, 200, [this.add.sprite(0, 0, "mandy", 26)]).setDepth(1).setScale(2)
         window.player = this.player
@@ -122,6 +146,7 @@ export class PlayScene extends Phaser.Scene {
         this.anna.setCollideWorldBounds(true)
         this.keyboard = this.input.keyboard.addKeys("W, A, S, D")
         this.input.on("pointermove", (pointer) => {
+
             if (pointer.isDown) { //is clicking
                 let fire = this.add.sprite(pointer.worldX, pointer.worldY, "daze", "fire00.png").play("blaze")
                 this.fireAttacks.add(fire)
@@ -130,6 +155,11 @@ export class PlayScene extends Phaser.Scene {
                 })
             }
         })
+        
+        this.input.on("pointerdown", (pointer) => {
+            this.moveClickEvent(pointer.worldX, pointer.worldY)
+        })
+
 
         let mappy = this.add.tilemap("mappy")
 

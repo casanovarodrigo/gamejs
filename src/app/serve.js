@@ -24,6 +24,14 @@ io.on('connection', (socket) => {
         socket.emit('allplayers', getAllPlayers())
         socket.broadcast.emit('newplayer', socket.player)
 
+
+        socket.on('click',function(data){
+            console.log('click to '+data.x+', '+data.y);
+            socket.player.x = data.x;
+            socket.player.y = data.y;
+            io.emit('movement', socket.player);
+        });
+
         socket.on('disconnect', () => {
             console.log('saiu')
             io.emit('removeplayers', socket.player.id)
