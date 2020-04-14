@@ -23,11 +23,14 @@ app.use(bodyParser.json())
 app.use(helmet())
 
 
-app.use(express.static(path.resolve('./public')))
- 
+console.log(path.resolve('./public'));
+
+// app.use(express.static(path.resolve('./public')))
+app.use('/public', express.static(path.resolve('./public')))
+// app.use(express.static(__dirname + '/public'));
+
 app.get('/', function (req, res) {
   const view = path.resolve(`./src/app/views/game.html`)
-  console.log(view)
   res.sendFile(view)
 });
 

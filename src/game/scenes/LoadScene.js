@@ -9,7 +9,7 @@ export class LoadScene extends Phaser.Scene {
 
     }
     loadImages() {
-        this.load.setPath("./assets/image");
+        this.load.setPath("./public/assets/image");
 
         for (let prop in CST.IMAGE) {
             //@ts-ignore
@@ -17,7 +17,7 @@ export class LoadScene extends Phaser.Scene {
         }
     }
     loadAudio() {
-        this.load.setPath("./assets/audio");
+        this.load.setPath("./public/assets/audio");
 
         for (let prop in CST.AUDIO) {
             //@ts-ignore
@@ -25,7 +25,7 @@ export class LoadScene extends Phaser.Scene {
         }
     }
     loadSprites(frameConfig) {
-        this.load.setPath("./assets/sprite");
+        this.load.setPath("./public/assets/sprite");
 
         for (let prop in CST.SPRITE) {
             //@ts-ignore
@@ -33,11 +33,11 @@ export class LoadScene extends Phaser.Scene {
         }
     }
     preload() {
-        this.load.spritesheet("anna", "./assets/sprite/anna.png", {frameHeight: 64, frameWidth: 64});
+        this.load.spritesheet("anna", "./public/assets/sprite/anna.png", {frameHeight: 64, frameWidth: 64});
         //load atlases
-        this.load.atlas("characters", "./assets/sprite/characters.png", "./assets/sprite/characters.json")
-        this.load.atlas("daze", "./assets/sprite/daze.png", "./assets/sprite/daze.json")
-        this.load.spritesheet("rapier", "./assets/sprite/WEAPON_rapier.png", {frameHeight: 192, frameWidth: 192});
+        this.load.atlas("characters", "./public/assets/sprite/characters.png", "./public/assets/sprite/characters.json")
+        this.load.atlas("daze", "./public/assets/sprite/daze.png", "./public/assets/sprite/daze.json")
+        this.load.spritesheet("rapier", "./public/assets/sprite/WEAPON_rapier.png", {frameHeight: 192, frameWidth: 192});
 
         //load image, spritesheet, sound
         this.loadAudio();
@@ -64,7 +64,7 @@ export class LoadScene extends Phaser.Scene {
         //simulate large load
         /*
         for(let i = 0; i < 100; i++){
-            this.load.spritesheet("cat" + i, "./assets/cat.png", {
+            this.load.spritesheet("cat" + i, "./public/assets/cat.png", {
                 frameHeight: 32,
                 frameWidth: 32
             });        

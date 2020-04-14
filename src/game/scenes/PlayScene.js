@@ -9,12 +9,12 @@ export class PlayScene extends Phaser.Scene {
         });
     }
     preload() {
-        Echo.channel('enter-room')
-            .listen('EnterRoom', function(){
-                console.log('Novo usuário na sala');
-            });
+        // Echo.channel('enter-room')
+        //     .listen('EnterRoom', function(){
+        //         console.log('Novo usuário na sala');
+        //     });
 
-        axios.get('event/enter').then((response) => console.log(response));
+        // axios.get('event/enter').then((response) => console.log(response));
 
         this.anims.create({
             key: "left",
@@ -62,10 +62,10 @@ export class PlayScene extends Phaser.Scene {
         });
         this.textures.addSpriteSheetFromAtlas("mandy", { frameHeight: 64, frameWidth: 64, atlas: "characters", frame: "mandy" });
 
-        this.load.image("terrain", "./assets/image/terrain_atlas.png");
-        this.load.image("items", "./assets/image/items.png");
+        this.load.image("terrain", "./public/assets/image/terrain_atlas.png");
+        this.load.image("items", "./public/assets/image/items.png");
 
-        this.load.tilemapTiledJSON("mappy", "./assets/maps/mappy.json");
+        this.load.tilemapTiledJSON("mappy", "./public/assets/maps/mappy.json");
 
 
     }

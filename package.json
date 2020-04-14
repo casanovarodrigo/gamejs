@@ -2,12 +2,13 @@
   "name": "gamejs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "dev": "nodemon --exec babel-node ./src/app/serve.js",
-    "buildgame": ".\\node_modules\\.bin\\babel src\\game --out-dir public\\js\\game --source-maps",
     "watchgame": "del .\\public\\js\\game\\*.* /s /q >NUL; && .\\node_modules\\.bin\\babel src\\game --out-dir public\\js\\game --watch --source-maps",
     "buildapp": "del .\\build\\*.* /s /q >NUL; && .\\node_modules\\.bin\\babel src\\app --out-dir build --source-maps",
+    "bgame": "webpack",
+    "buildgame": "webpack ./src/game/main.js --output ./public/game.js --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -19,9 +20,14 @@
     "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
     "@babel/register": "^7.9.0",
+    "babel-loader": "^8.1.0",
     "express-list-endpoints": "^4.0.1",
+    "html-loader": "^1.1.0",
+    "html-webpack-plugin": "^4.2.0",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
   },
   "dependencies": {
     "@babel/runtime": "^7.9.2",
