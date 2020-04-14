@@ -9,21 +9,24 @@ export class PlayScene extends Phaser.Scene {
         super({
             key: CST.SCENES.PLAY,
         })
+        this.playerMap = {}
     }
 
     preload() {
         Client.askNewPlayer()
         
-        Client.socket.on('newplayer', (data) => {
-            console.log("outro usuário conectouuu", data)
+        Client.socket.on('newplayer', (playerList) => {
+            this.addPlayers(playerList)
         })
 
-        Client.socket.on('allplayers', (data) => {
-            console.log(data)
-            data.forEach(player => {
-                Game.addNewPlayer(player.id, player.x, player.y)
-            })
+        Client.socket.on('allplayers', (playerList) => {
+            this.addPlayers(playerList)
         })
+
+        Client.socket.on('removeplayers', (idList) => {
+            console.log('saiu', idList)
+            this.removePlayer(idList)
+        });
 
         this.anims.create({
             key: "left",
@@ -82,12 +85,35 @@ export class PlayScene extends Phaser.Scene {
 
     }
 
+    addPlayers(playerList){
+        const players = {};
+        if(playerList && !Array.isArray(playerList)){
+            playerList = [playerList]
+        }
+        playerList.forEach(player => {
+            players[player.id] = new CharacterSprite(this, player.x, player.y, ("anna"), 26)
+            players[player.id].setSize(40, 50).setOffset(10, 10)
+            players[player.id].setCollideWorldBounds(true)
+        })
+        this.playerMap = Object.assign({}, this.playerMap, players)
+    }
+
+    removePlayer(idList){
+        if(idList && !Array.isArray(idList)){
+            idList = [idList]
+        }
+        idList.forEach(playerId => {
+            this.playerMap[playerId].destroy()
+            delete this.playerMap[playerId]
+        })
+    }
+
     create() {
         this.player = this.add.container(200, 200, [this.add.sprite(0, 0, "mandy", 26)]).setDepth(1).setScale(2)
         window.player = this.player
         
         
-        this.anna = new CharacterSprite(this, 400, 300, "anna", 26)
+        this.anna = new CharacterSprite(this, 400, 300, "anna_", 26)
         this.fireAttacks = this.physics.add.group()
         window.anna = this.anna
 
@@ -137,13 +163,10 @@ export class PlayScene extends Phaser.Scene {
             faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Colliding face edges
         })
     }
+
     update(time, delta) { //delta 16.666 @ 60fps
 
         const playerList = CST.GAME_STATE.playerList
-
-        Client.socket.on('newplayer',function(data){
-            Game.addNewPlayer(data.id, data.x, data.y)
-        })
 
         if (this.anna.active === true) {
             if (this.keyboard.D.isDown === true) {

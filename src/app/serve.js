@@ -15,13 +15,19 @@ server.lastPlayderID = 0
 io.on('connection', (socket) => {
 
     socket.on('newplayer', () => {
-        socket.player = {
+        const player = {
             id: server.lastPlayderID++,
-            x: randomInt(100,400),
-            y: randomInt(100,400)
+            x: randomInt(100,700),
+            y: randomInt(100,500)
         }
+        socket.player = player
         socket.emit('allplayers', getAllPlayers())
         socket.broadcast.emit('newplayer', socket.player)
+
+        socket.on('disconnect', () => {
+            console.log('saiu')
+            io.emit('removeplayers', socket.player.id)
+        })
     })
 
 })
