@@ -10,8 +10,6 @@ import moduleAlias from "module-alias";
 const appPath = `./${process.env.NODE_ENV === 'production'? 'build' : 'src'}/app/`
 
 moduleAlias.addAlias(`@app`, path.resolve(`${appPath}`))
-moduleAlias.addAlias(`@game`, path.resolve(`${appPath}/js/game/`))
-
 
 const app = express()
 
@@ -22,12 +20,9 @@ if (process.env.NODE_ENV == "development"){
 app.use(bodyParser.json())
 app.use(helmet())
 
-
-console.log(path.resolve('./public'));
-
-// app.use(express.static(path.resolve('./public')))
 app.use('/public', express.static(path.resolve('./public')))
-// app.use(express.static(__dirname + '/public'));
+
+// routes
 
 app.get('/', function (req, res) {
   const view = path.resolve(`./src/app/views/game.html`)

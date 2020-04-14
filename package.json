@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "devserver": "nodemon --exec babel-node ./src/app/serve.js",
-    "buildgame": "webpack"
+    "buildapp": "del .\\build\\*.* /s /q >NUL; && .\\node_modules\\.bin\\babel src\\app --out-dir build --source-maps",
+    "buildgame": "webpack",
+    "watchgame": "webpack --watch"
   },
   "author": "",
   "license": "ISC",
