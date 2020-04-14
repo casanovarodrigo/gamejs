@@ -4,12 +4,8 @@
   "description": "",
   "private": true,
   "scripts": {
-    "dev": "nodemon --exec babel-node ./src/app/serve.js",
-    "watchgame": "del .\\public\\js\\game\\*.* /s /q >NUL; && .\\node_modules\\.bin\\babel src\\game --out-dir public\\js\\game --watch --source-maps",
-    "buildapp": "del .\\build\\*.* /s /q >NUL; && .\\node_modules\\.bin\\babel src\\app --out-dir build --source-maps",
-    "bgame": "webpack",
-    "buildgame": "webpack ./src/game/main.js --output ./public/game.js --mode development",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "devserver": "nodemon --exec babel-node ./src/app/serve.js",
+    "buildgame": "webpack"
   },
   "author": "",
   "license": "ISC",
@@ -22,8 +18,6 @@
     "@babel/register": "^7.9.0",
     "babel-loader": "^8.1.0",
     "express-list-endpoints": "^4.0.1",
-    "html-loader": "^1.1.0",
-    "html-webpack-plugin": "^4.2.0",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.3",
     "webpack": "^4.42.1",

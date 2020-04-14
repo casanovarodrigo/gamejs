@@ -1,7 +1,10 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-
 module.exports ={
     mode: 'development',
+    entry: './src/game/main.js',
+    output: {
+        filename: 'game.bundled.js',
+        path: __dirname + '/public'
+    },
 	module: {
         rules: [
             {
@@ -12,23 +15,8 @@ module.exports ={
                 }
 
             },
-            // {
-            //     test: /\.html$/,
-            //     use: [
-            //         {
-            //             loader: 'html-loader',
-            //             options: {minimize: false}
-            //         }
-            //     ]
-            // }
 
         ]
     },
-    // plugins: [
-    //     new HtmlWebpackPlugin({
-    //         template: './src/app/views/game.html',
-    //         filename:'./index.html'
-    //     })
-    // ],
     devtool: 'source-map'
 }

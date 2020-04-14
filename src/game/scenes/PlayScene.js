@@ -3,11 +3,13 @@ import { CharacterSprite } from "../CharacterSprite";
 import { Sprite } from "../Sprite";
 
 export class PlayScene extends Phaser.Scene {
+    
     constructor() {
         super({
             key: CST.SCENES.PLAY,
         });
     }
+
     preload() {
         // Echo.channel('enter-room')
         //     .listen('EnterRoom', function(){
@@ -67,8 +69,8 @@ export class PlayScene extends Phaser.Scene {
 
         this.load.tilemapTiledJSON("mappy", "./public/assets/maps/mappy.json");
 
-
     }
+
     create() {
         this.player = this.add.container(200, 200, [this.add.sprite(0, 0, "mandy", 26)]).setDepth(1).setScale(2);
         window.player = this.player;
