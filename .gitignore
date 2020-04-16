@@ -61,5 +61,6 @@ typings/
 .next
 
 build/
-public/
+public/*
+!public/assets
 /.ssh
