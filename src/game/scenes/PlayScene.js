@@ -99,6 +99,7 @@ export class PlayScene extends Phaser.Scene {
             players[player.id].setSize(40, 50).setOffset(10, 10)
             players[player.id].setCollideWorldBounds(true)
         })
+
         this.playerMap = Object.assign({}, this.playerMap, players)
     }
 
