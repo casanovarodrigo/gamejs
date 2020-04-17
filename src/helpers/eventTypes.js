@@ -7,4 +7,5 @@ export default {
     SERVER_PACKET: 'serverpacket',
     ROOM_INFO: 'roominfo',
     ASK_ROOM: 'askroom',
+    CLICK_EVENT: 'clickevent'
 }

@@ -82,8 +82,6 @@ export class PlayScene extends Phaser.Scene {
             playerList = [playerList]
         }
         playerList.forEach(player => {
-            console.log('player')
-            console.log(player, player.position)
             const pX = player.position? player.position.x : player.x
             const pY = player.position? player.position.y : player.y
             players[player.id] = new CharacterSprite(this, pX, pY, ("anna"), 26)
@@ -97,28 +95,24 @@ export class PlayScene extends Phaser.Scene {
         this.playerMap[playerId].destroy()
         delete this.playerMap[playerId]
     }
-
-    moveClickEvent(worldX, worldY){
+    
+    moveClick(worldX, worldY){
         Networking.sendClick(worldX, worldY)
     }
     
-    newMoveClickEvent(worldX, worldY){
-        Networking.newSendClick(worldX, worldY)
-    }
-    
-    movePlayer(id, x, y){
+    movePlayer(id, position){
         let player = this.playerMap[id]
-        let distance = Phaser.Math.Between(player.x, player.y, x, y)
-        let duration = distance * 5
+        let distance = Phaser.Math.Between(player.x, player.y, position.x, position.y)
+        let duration = distance * 4
         // #1 Bug - distance traveled
         // console.log(distance, duration)
         this.tweens.add({
             targets: player,
-            x: x,
-            y: y,
+            x: position.x,
+            y: position.y,
             duration: duration,
             ease: 'elastic',
-            delay: 100
+            delay: 20
         })
     }
 
@@ -126,11 +120,11 @@ export class PlayScene extends Phaser.Scene {
         this.player = this.add.container(200, 200, [this.add.sprite(0, 0, "mandy", 26)]).setDepth(1).setScale(2)
         window.player = this.player
         
-        this.keyboard = this.input.keyboard.addKeys("W, A, S, D")
+        // this.keyboard = this.input.keyboard.addKeys("W, A, S, D")
 
         
         this.input.on("pointerdown", (pointer) => {
-            this.newMoveClickEvent(pointer.worldX, pointer.worldY)
+            this.moveClick(pointer.worldX, pointer.worldY)
         })
 
 
@@ -160,7 +154,20 @@ export class PlayScene extends Phaser.Scene {
 
     update(time, delta) { //delta 16.666 @ 60fps
 
-        const { me, others } = getCurrentState();
+        const { me, others } = getCurrentState()
+
+        if (!me){
+            return;
+        }
+
+        // move player
+        this.movePlayer(me.id, me.position)
+        // move others
+        others.forEach(otherPlayer => {
+            this.movePlayer(otherPlayer.id, otherPlayer.position)
+        })
+
+
 
         // console.log('me', 'others')
         // console.log(me, others)

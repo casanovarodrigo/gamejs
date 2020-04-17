@@ -61,7 +61,7 @@ export default class gameServer {
                 // that.io.emit(eventType.MOVEMENT, player.serialize())
             })
             
-            socket.on('click_event', (data) => {
+            socket.on(eventType.CLICK_EVENT, (data) => {
                 const movedPlayer = lobby.movePlayer(player, data)
                 this.allPlayers[player.id] = movedPlayer
             })

@@ -67,12 +67,10 @@ export default new class Networking {
         this.roomInfo.lobby = roomInfo.lobby
         this.roomInfo.room = roomInfo.room
     }
-    
-    sendClick(x, y){
-        this.socket.emit('click', { x, y})
-    }
 
-    newSendClick(x, y){
-        this.socket.emit('click_event', { x, y })
+    sendClick(x, y){
+        this.socket.emit(eventType.CLICK_EVENT, { x, y })
     }
+    
+    
 }
