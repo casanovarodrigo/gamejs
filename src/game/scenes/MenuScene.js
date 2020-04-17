@@ -1,11 +1,21 @@
 import { CST } from "../CST"
+import Networking from "../networking"
+
 export class MenuScene extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.MENU
         })
+        // this.readyFlag = false
     }
     init() {
+    }
+    preload(){
+        // Networking.askNewRoom()
+        // Networking.socket.on('room_info', (roomInfo) => {
+        //     Networking.updateRoomInfo(roomInfo)
+        //     this.readyFlag = true
+        // })
     }
     create() { //creating the menu screen
 
