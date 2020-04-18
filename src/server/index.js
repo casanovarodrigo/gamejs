@@ -46,6 +46,7 @@ export default class gameServer {
             const player = lobby.autoNewPlayer(socket)
             
             this.allPlayers[player.id] = player
+
             // emit all players only for new player
             socket.emit(eventType.ALL_PLAYERS, this.getAllPlayers())
             
@@ -61,8 +62,13 @@ export default class gameServer {
                 // that.io.emit(eventType.MOVEMENT, player.serialize())
             })
             
+            // socket.on(eventType.CLICK_EVENT, (data) => {
+            //     const movedPlayer = lobby.movePlayer(player, data)
+            //     this.allPlayers[player.id] = movedPlayer
+            // })
+            
             socket.on(eventType.CLICK_EVENT, (data) => {
-                const movedPlayer = lobby.movePlayer(player, data)
+                const movedPlayer = lobby.setTargetPosition(player, data)
                 this.allPlayers[player.id] = movedPlayer
             })
 
@@ -90,12 +96,12 @@ export default class gameServer {
 
                 const lobby = LobbyManager.getInstance()
                 const playerId = lobby.getPlayerIDFromSocketID(playerID)
-                const player = this.allPlayers[playerId]
+                const player = this.allPlayers[playerId].update(dt)
                 
                 const otherPlayersKeys = Object.keys(this.allPlayers).filter(id => id != playerId)
                 const otherPlayers = {}
                 otherPlayersKeys.forEach(key => {
-                    Object.assign(otherPlayers, { [key]: this.allPlayers[key] })
+                    Object.assign(otherPlayers, { [key]: this.allPlayers[key].update(dt) })
                 })
                 const getUpdate = this.createUpdate(player, otherPlayers)
                 socket.emit(eventType.SERVER_PACKET, getUpdate)
@@ -109,11 +115,11 @@ export default class gameServer {
 
     createUpdate(player, otherPlayers) {
         const otherMap = Object.keys(otherPlayers).map(playerId => {
-            return otherPlayers[playerId].serialize()
+            return otherPlayers[playerId].serializeForUpdate()
         })
         return {
             t: Date.now(),
-            me: player.serialize(),
+            me: player.serializeForUpdate(),
             others: otherMap
         }
     }

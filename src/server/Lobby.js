@@ -41,18 +41,57 @@ export default (() => {
             return this.socketToPlayerMap.get(socketId)
         }
 
-        movePlayer(player, data){
-            console.log('click to '+data.x+', '+data.y)
-            player.position.x = data.x
-            player.position.y = data.y
-            const currentRoom = this.rooms[this.getCurrentRoom()]
-            currentRoom.players[player.id] = player
+        setTargetPosition(player, data){
+            const targetPosition = {
+                x: data.x,
+                y: data.y
+            }
+            // if player moved
+            if (targetPosition.x !== player.position.x || targetPosition.y !== player.position.y){
+                console.log('new movement')
+                console.log('click to '+data.x+', '+data.y)
+                console.log('pos '+data.dir)
+                player.targetPosition.x = Math.max(0, Math.min(800, data.x));
+                player.targetPosition.y = Math.max(0, Math.min(600, data.y));
+                player.direction = data.dir
+                const currentRoom = this.rooms[this.getCurrentRoom()]
+                currentRoom.players[player.id] = player
+            }
+            
             return player
         }
 
+        // movePlayer(player, data){
+        //     const targetPosition = {
+        //         x: data.x,
+        //         y: data.y
+        //     }
+        //     const currentTarget = player.targetPosition
+        //     // if player clicked to move
+        //     if (targetPosition.x !== currentTarget.position.x || targetPosition.y !== currentTarget.position.y){
+        //         // if player has to move
+        //         if (currentTarget.position.x !== player.position.x || currentTarget.position.y !== player.position.y){
+        //             player.update(dt)
+        //         }
+        //         console.log('new movement')
+        //         console.log('click to '+data.x+', '+data.y)
+        //         player.targetPosition.x = data.x
+        //         player.targetPosition.y = data.y
+        //         player.dir = data.pos
+        //         const currentRoom = this.rooms[this.getCurrentRoom()]
+        //         currentRoom.players[player.id] = player
+        //     }
+            
+            
+        //     return player
+        // }
+
         autoNewPlayer(socket){
-            const newPlayer = new PlayerClass()
-            const player = newPlayer.init(socket.id)
+            // const newPlayer = new PlayerClass()
+            const player = new PlayerClass(socket.id)
+            console.log('player')
+            console.log(player)
+            // const player = newPlayer.init(socket.id)
             if (this.addPlayerToRoom(this.getCurrentRoom(), player.serialize())){
                 this.socketToPlayerMap.set(socket.id, player.id)
                 return player

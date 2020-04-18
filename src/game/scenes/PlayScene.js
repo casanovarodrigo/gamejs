@@ -12,6 +12,7 @@ export class PlayScene extends Phaser.Scene {
         super({
             key: CST.SCENES.PLAY,
         })
+        this.currentPlayer = null
         this.playerMap = {}
     }
 
@@ -87,8 +88,25 @@ export class PlayScene extends Phaser.Scene {
             players[player.id] = new CharacterSprite(this, pX, pY, ("anna"), 26)
             players[player.id].setSize(40, 50).setOffset(10, 10)
             players[player.id].setCollideWorldBounds(true)
+            players[player.id].socketID = Networking.getSocketID()
         })
         this.playerMap = Object.assign({}, this.playerMap, players)
+
+        if (!this.currentPlayer){
+            let  playerToAssign = {}
+            Object.keys(this.playerMap).forEach(key => {
+                if (this.playerMap[key].socketID === Networking.getSocketID()){
+                    playerToAssign = this.playerMap[key]
+                }
+            })
+            this.currentPlayer = playerToAssign
+            console.log(playerToAssign)
+            this.cameras.main.startFollow(this.currentPlayer)
+        }
+    }
+
+    addCurrentPlayer(player){
+        this.currentPlayer = player
     }
 
     removePlayer(playerId){
@@ -96,8 +114,13 @@ export class PlayScene extends Phaser.Scene {
         delete this.playerMap[playerId]
     }
     
-    moveClick(worldX, worldY){
-        Networking.sendClick(worldX, worldY)
+    clickEvent(worldX, worldY){
+        const dir = Math.atan2(this.currentPlayer.x - worldX, this.currentPlayer.y - worldY/ 2)
+        console.log("Position")
+        console.log(worldX, worldY)
+        console.log("Direction")
+        console.log(dir)
+        Networking.clickEvent(worldX, worldY, dir)
     }
     
     movePlayer(id, position){
@@ -124,7 +147,7 @@ export class PlayScene extends Phaser.Scene {
 
         
         this.input.on("pointerdown", (pointer) => {
-            this.moveClick(pointer.worldX, pointer.worldY)
+            this.clickEvent(pointer.worldX, pointer.worldY)
         })
 
 
@@ -137,7 +160,7 @@ export class PlayScene extends Phaser.Scene {
 
 
         //by tile property
-        topLayer.setCollisionByProperty({collides:true})
+        topLayer.setCollisionByProperty({ collides: true })
 
         //by tile index
         topLayer.setCollision([269,270,271,301,302,303,333,334,335])

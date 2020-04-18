@@ -1,25 +1,31 @@
 import now from 'moment'
 import { randomInt } from '../helpers/mathHelper'
+import BaseObject from './BaseObject'
 
-export default class Player {
-    constructor(){
-        this.id = ''
-        this.socketID = ''
-        this.position = { x: 0, y: 0 }
-        this.created_at = ''
-        this.lastID = ''
+let lastID = 0
+const createID = () => {
+    const dateInMS = parseInt((new Date().getTime() / 1000).toString().replace('.', '')) // date with miliseconds
+    if (lastID && dateInMS - lastID <= 1){
+        lastID = dateInMS+1
+        return lastID.toString()
     }
+    lastID = dateInMS
+    return dateInMS.toString()
+}
 
-    init(socketID){
+export default class Player extends BaseObject {
+    constructor(socketID){
+        const dir = Math.random() * 2 * Math.PI
+        const PLAYER_SPEED = 200
         const position = {
             x: randomInt(100,700),
             y: randomInt(100,500)
         }
-        this.id = this.createID()
-        this.created_at = now().utc().toDate()
+        const id = createID()
+
+        super(id, position, dir, PLAYER_SPEED)
         this.socketID = socketID
-        this.position = position
-        return this
+        this.created_at = now().utc().toDate()
     }
 
     serialize(){
@@ -33,14 +39,10 @@ export default class Player {
         }
     }
 
-
-    createID(){
-        const dateInMS = parseInt((new Date().getTime() / 1000).toString().replace('.', '')) // date with miliseconds
-        if (this.lastID && dateInMS - this.lastID <= 1){
-            this.lastID = dateInMS+1
-            return this.lastID.toString()
+    serializeForUpdate() {
+        return {
+            ...(super.serializeForUpdate()),
+            socketID: this.socketID
         }
-        this.lastID = dateInMS
-        return dateInMS.toString()
-    }
+      }
 }

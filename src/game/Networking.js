@@ -53,8 +53,6 @@ export default new class Networking {
         })
     }
 
-    
-
     askNewPlayer(){
         this.socket.emit(eventType.NEW_PLAYER)
     }
@@ -68,9 +66,17 @@ export default new class Networking {
         this.roomInfo.room = roomInfo.room
     }
 
-    sendClick(x, y){
-        this.socket.emit(eventType.CLICK_EVENT, { x, y })
+    clickEvent(x, y, dir){
+        this.socket.emit(eventType.CLICK_EVENT, { x, y, dir })
     }
+
+    getSocketID(){
+        return this.socket.id
+    }
+    
+    // sendClick(x, y){
+    //     this.socket.emit(eventType.CLICK_EVENT, { x, y })
+    // }
     
     
 }
