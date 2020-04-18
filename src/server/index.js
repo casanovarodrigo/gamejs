@@ -43,43 +43,27 @@ export default class gameServer {
             this.sockets[socket.id] = socket
             
             // new player from default lobby room
-            const player = lobby.autoNewPlayer(socket)
+            const player = lobby.addPlayerToRoom(socket)
             
-            this.allPlayers[player.id] = player
 
             // emit all players only for new player
-            socket.emit(eventType.ALL_PLAYERS, this.getAllPlayers())
+            socket.emit(eventType.ALL_PLAYERS, lobby.getAllPlayersFromRoom())
             
-            // broadcast new player location to all sockets except new player
-            socket.broadcast.emit(eventType.NEW_PLAYER, player.serialize())
-
+            socket.broadcast.emit(eventType.NEW_PLAYER, player.serialize()) // broadcast new player location to all sockets except new player
+            
             // other socket events inside of newplayer event just for convenience - maybe have to change later
             // to-do then: create a function to return the player by socketID
-            socket.on('click', (data) => {
-                // console.log('click to '+data.x+', '+data.y)
-                player.x = data.x
-                player.y = data.y
-                // that.io.emit(eventType.MOVEMENT, player.serialize())
-            })
-            
-            // socket.on(eventType.CLICK_EVENT, (data) => {
-            //     const movedPlayer = lobby.movePlayer(player, data)
-            //     this.allPlayers[player.id] = movedPlayer
-            // })
-            
-            socket.on(eventType.CLICK_EVENT, (data) => {
-                const movedPlayer = lobby.setTargetPosition(player, data)
-                this.allPlayers[player.id] = movedPlayer
-            })
-
-            socket.on(eventType.DISCONNECT, () => {
-                console.log('saiu')
-                delete that.sockets[socket.id]
-                delete that.allPlayers[player.id]
-                that.io.emit(eventType.REMOVE_PLAYER, player.id)
-            })
-
             setInterval(this.update.bind(this), 10000 / 60)
+        })
+
+        socket.on(eventType.CLICK_EVENT, (data) => {
+            lobby.setPlayerTargetPosition(socket.id, data)
+        })
+
+        socket.on(eventType.DISCONNECT, () => {
+            delete that.sockets[socket.id]
+            lobby.removePlayerFromRoom(socket.id)
+            that.io.emit(eventType.REMOVE_PLAYER, lobby.getPlayerIDBySocketID(socket.id))
         })
     }
 
@@ -95,13 +79,15 @@ export default class gameServer {
                 const socket = this.sockets[playerID]
 
                 const lobby = LobbyManager.getInstance()
-                const playerId = lobby.getPlayerIDFromSocketID(playerID)
-                const player = this.allPlayers[playerId].update(dt)
+                const playerId = lobby.getPlayerIDBySocketID(playerID)
+                const allPlayers = lobby.getAllPlayersFromRoom()
+                const player = allPlayers[playerId].update(dt)
+                lobby.updatePlayer(player)
                 
-                const otherPlayersKeys = Object.keys(this.allPlayers).filter(id => id != playerId)
+                const otherPlayersKeys = Object.keys(allPlayers).filter(id => id != playerId)
                 const otherPlayers = {}
                 otherPlayersKeys.forEach(key => {
-                    Object.assign(otherPlayers, { [key]: this.allPlayers[key].update(dt) })
+                    Object.assign(otherPlayers, { [key]: allPlayers[key].update(dt) })
                 })
                 const getUpdate = this.createUpdate(player, otherPlayers)
                 socket.emit(eventType.SERVER_PACKET, getUpdate)
@@ -123,14 +109,5 @@ export default class gameServer {
             others: otherMap
         }
     }
-
-    getAllPlayers(){
-        const all = []
-        Object.keys(this.allPlayers).forEach(key => {
-            all.push(this.allPlayers[key])
-        })
-        return all
-    }
-
 
 }

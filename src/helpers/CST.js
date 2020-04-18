@@ -1,4 +1,4 @@
-export const CST = {
+export default {
     SCENES: {
         LOAD: "LOAD",
         MENU: "MENU",
@@ -16,6 +16,8 @@ export const CST = {
     SPRITE: {
         CAT: "cat.png"
     },
+    WORLD_WIDTH: 800,
+    WORLD_HEIGHT: 600,
     GAME_STATE: {
         playerList: []
     }

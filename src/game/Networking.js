@@ -29,17 +29,11 @@ export default new class Networking {
             })
         
             this.socket.on(eventType.SERVER_PACKET, (packet) => {
-                // console.log('server PACKET', packet)
                 processGameUpdate(packet);
-                // scene.addPlayers(packet.me)
-                // scene.addPlayers(packet.others)
-                // console.log('server PACKET me', packet.me)
-                // console.log('server PACKET others', packet.others)
-
             })
 
             this.socket.on(eventType.NEW_PLAYER, (player) => {
-                scene.addPlayers(player)
+                scene.addPlayers( { [player.id]: player })
             })
 
             this.socket.on(eventType.ALL_PLAYERS, (playerList) => {
@@ -47,7 +41,6 @@ export default new class Networking {
             })
 
             this.socket.on(eventType.REMOVE_PLAYER, (playerId) => {
-                console.log("player saiu")
                 scene.removePlayer(playerId)
             })
         })
@@ -73,10 +66,5 @@ export default new class Networking {
     getSocketID(){
         return this.socket.id
     }
-    
-    // sendClick(x, y){
-    //     this.socket.emit(eventType.CLICK_EVENT, { x, y })
-    // }
-    
     
 }

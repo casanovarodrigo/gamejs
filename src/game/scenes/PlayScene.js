@@ -1,4 +1,4 @@
-import { CST } from "../CST"
+import CST from "../../helpers/CST"
 import { CharacterSprite } from "../CharacterSprite"
 import { Sprite } from "../Sprite"
 import Networking from "../Networking"
@@ -79,9 +79,13 @@ export class PlayScene extends Phaser.Scene {
 
     addPlayers(playerList){
         const players = {};
+        // if object transform into array
         if(playerList && !Array.isArray(playerList)){
-            playerList = [playerList]
+            playerList = Object.keys(playerList).map(playerId => {
+                return playerList[playerId]
+            })
         }
+
         playerList.forEach(player => {
             const pX = player.position? player.position.x : player.x
             const pY = player.position? player.position.y : player.y
@@ -90,8 +94,10 @@ export class PlayScene extends Phaser.Scene {
             players[player.id].setCollideWorldBounds(true)
             players[player.id].socketID = Networking.getSocketID()
         })
+
         this.playerMap = Object.assign({}, this.playerMap, players)
 
+        // set current player object
         if (!this.currentPlayer){
             let  playerToAssign = {}
             Object.keys(this.playerMap).forEach(key => {
@@ -100,14 +106,10 @@ export class PlayScene extends Phaser.Scene {
                 }
             })
             this.currentPlayer = playerToAssign
-            console.log(playerToAssign)
             this.cameras.main.startFollow(this.currentPlayer)
         }
     }
 
-    addCurrentPlayer(player){
-        this.currentPlayer = player
-    }
 
     removePlayer(playerId){
         this.playerMap[playerId].destroy()
@@ -125,23 +127,23 @@ export class PlayScene extends Phaser.Scene {
     
     movePlayer(id, position){
         let player = this.playerMap[id]
-        let distance = Phaser.Math.Between(player.x, player.y, position.x, position.y)
-        let duration = distance * 4
-        // #1 Bug - distance traveled
-        // console.log(distance, duration)
-        this.tweens.add({
-            targets: player,
-            x: position.x,
-            y: position.y,
-            duration: duration,
-            ease: 'elastic',
-            delay: 20
-        })
+        if (player){
+            let distance = Phaser.Math.Between(player.x, player.y, position.x, position.y)
+            let duration = distance * 4
+            // #1 Bug - distance traveled
+            // console.log(distance, duration)
+            this.tweens.add({
+                targets: player,
+                x: position.x,
+                y: position.y,
+                duration: duration,
+                ease: 'elastic',
+                delay: 20
+            })
+        }
     }
 
     create() {
-        this.player = this.add.container(200, 200, [this.add.sprite(0, 0, "mandy", 26)]).setDepth(1).setScale(2)
-        window.player = this.player
         
         // this.keyboard = this.input.keyboard.addKeys("W, A, S, D")
 
@@ -176,7 +178,6 @@ export class PlayScene extends Phaser.Scene {
     }
 
     update(time, delta) { //delta 16.666 @ 60fps
-
         const { me, others } = getCurrentState()
 
         if (!me){
@@ -189,14 +190,6 @@ export class PlayScene extends Phaser.Scene {
         others.forEach(otherPlayer => {
             this.movePlayer(otherPlayer.id, otherPlayer.position)
         })
-
-
-
-        // console.log('me', 'others')
-        // console.log(me, others)
-
-        const playerList = CST.GAME_STATE.playerList
-
 
     }
 }

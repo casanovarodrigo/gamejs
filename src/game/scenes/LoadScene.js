@@ -1,4 +1,4 @@
-import { CST } from "../CST"
+import CST from "../../helpers/CST"
 export class LoadScene extends Phaser.Scene {
     constructor() {
         super({

@@ -11,8 +11,8 @@ export default class BaseObject {
 		// if player has to move
 		if (this.targetPosition.x !== this.position.x || this.targetPosition.y !== this.position.y){
 			
-			this.position.x -= dt * this.speed * Math.sin(this.direction)
-			this.position.y -= dt * this.speed * Math.cos(this.direction)
+			this.position.x += dt * this.speed * ( - Math.sin(this.direction ));
+    		this.position.y -= dt * this.speed * Math.cos(this.direction);
 			// console.log('movendo player', this.position.x, this.position.y)
 			// const dir = Math.atan2(this.position.x - this.targetPosition.x, this.position.y - this.targetPosition.y / 2)
 			// this.direction = dir

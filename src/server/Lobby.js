@@ -1,5 +1,6 @@
 import now from 'moment'
 import PlayerClass from './Player'
+import CST from '../helpers/CST'
 
 export default (() => {
     class Lobby {
@@ -37,11 +38,24 @@ export default (() => {
             return Object.keys(this.rooms)[0]
         }
     
-        getPlayerIDFromSocketID(socketId){
+        getPlayerIDBySocketID(socketId){
             return this.socketToPlayerMap.get(socketId)
         }
 
-        setTargetPosition(player, data){
+        getPlayerBySocketID(socketID){
+            const playerId = this.getPlayerIDBySocketID(socketID)
+            const allPlayers = this.getAllPlayersFromRoom()
+            return allPlayers[playerId] || null
+        }
+        
+        getAllPlayersFromRoom(){
+            const roomId = this.getCurrentRoom()
+            const room = this.rooms[roomId]
+            return room? room.players : null
+        }
+
+        setPlayerTargetPosition(socketId, data){
+            const player = this.getPlayerBySocketID(socketId)
             const targetPosition = {
                 x: data.x,
                 y: data.y
@@ -50,68 +64,43 @@ export default (() => {
             if (targetPosition.x !== player.position.x || targetPosition.y !== player.position.y){
                 console.log('new movement')
                 console.log('click to '+data.x+', '+data.y)
-                console.log('pos '+data.dir)
-                player.targetPosition.x = Math.max(0, Math.min(800, data.x));
-                player.targetPosition.y = Math.max(0, Math.min(600, data.y));
+                console.log('direction '+data.dir)
+                player.targetPosition.x = Math.max(0, Math.min(CST.WORLD_WIDTH, data.x));
+                player.targetPosition.y = Math.max(0, Math.min(CST.WORLD_HEIGHT, data.y));
                 player.direction = data.dir
-                const currentRoom = this.rooms[this.getCurrentRoom()]
-                currentRoom.players[player.id] = player
+                this.updatePlayer(player)
             }
             
             return player
         }
 
-        // movePlayer(player, data){
-        //     const targetPosition = {
-        //         x: data.x,
-        //         y: data.y
-        //     }
-        //     const currentTarget = player.targetPosition
-        //     // if player clicked to move
-        //     if (targetPosition.x !== currentTarget.position.x || targetPosition.y !== currentTarget.position.y){
-        //         // if player has to move
-        //         if (currentTarget.position.x !== player.position.x || currentTarget.position.y !== player.position.y){
-        //             player.update(dt)
-        //         }
-        //         console.log('new movement')
-        //         console.log('click to '+data.x+', '+data.y)
-        //         player.targetPosition.x = data.x
-        //         player.targetPosition.y = data.y
-        //         player.dir = data.pos
-        //         const currentRoom = this.rooms[this.getCurrentRoom()]
-        //         currentRoom.players[player.id] = player
-        //     }
-            
-            
-        //     return player
-        // }
-
-        autoNewPlayer(socket){
-            // const newPlayer = new PlayerClass()
-            const player = new PlayerClass(socket.id)
-            console.log('player')
-            console.log(player)
-            // const player = newPlayer.init(socket.id)
-            if (this.addPlayerToRoom(this.getCurrentRoom(), player.serialize())){
+        updatePlayer(player){
+            const roomId = this.getCurrentRoom()
+            const room = this.rooms[roomId]
+            if (room.players && room.players[player.id]){
+                room.players[player.id] = player
+            }
+        }
+    
+        addPlayerToRoom(socket){
+            const roomId = this.getCurrentRoom()
+            const room = this.rooms[roomId] || null
+            if (room){
+                const player = new PlayerClass(socket.id)
+                room.players[player.id] = player
                 this.socketToPlayerMap.set(socket.id, player.id)
                 return player
             }
             return false
         }
     
-        addPlayerToRoom(roomId, player){
+        removePlayerFromRoom(socketId){
+            const playerId = this.getPlayerIDBySocketID(socketId)
+            const roomId = this.getCurrentRoom()
             const room = this.rooms[roomId] || null
+            
             if (room){
-                room.players[player.id] = player
-                return roomId
-            }
-            return false
-        }
-    
-        removePlayerFromRoom(roomId, player){
-            const room = this.rooms[roomId] || null
-            if (room){
-                delete room.players[player.id]
+                delete room.players[playerId]
                 return room.id
             }
             return false
