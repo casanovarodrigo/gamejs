@@ -44,8 +44,11 @@ export default (() => {
 
         getPlayerBySocketID(socketID){
             const playerId = this.getPlayerIDBySocketID(socketID)
-            const allPlayers = this.getAllPlayersFromRoom()
-            return allPlayers[playerId] || null
+            if (playerId){
+                const allPlayers = this.getAllPlayersFromRoom()
+                return allPlayers[playerId]
+            }
+            return null
         }
         
         getAllPlayersFromRoom(){
@@ -61,7 +64,7 @@ export default (() => {
                 y: data.y
             }
             if (player){
-                player.updateTarget(targetPosition)
+                player.updateTargetPosition(targetPosition)
             }
             return player
         }

@@ -20,5 +20,6 @@ export default {
     WORLD_HEIGHT: 960,
     GAME_STATE: {
         playerList: []
-    }
+    },
+    REFRESH_RATE: 1000 / 60
 }

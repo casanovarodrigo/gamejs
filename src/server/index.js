@@ -3,6 +3,7 @@ import io from 'socket.io'
 import LobbyManager from './Lobby'
 import PlayerClass from './Player'
 import eventType from '../helpers/eventTypes'
+import CST from '../helpers/CST'
 
 export default class gameServer {
     constructor(io) {
@@ -53,7 +54,7 @@ export default class gameServer {
             
             // other socket events inside of newplayer event just for convenience - maybe have to change later
             // to-do then: create a function to return the player by socketID
-            setInterval(this.update.bind(this), 1000 / 60)
+            setInterval(this.update.bind(this), CST.REFRESH_RATE)
         })
 
         socket.on(eventType.CLICK_EVENT, (data) => {
@@ -71,12 +72,9 @@ export default class gameServer {
         // Calculate time elapsed
         const now = Date.now()
         const dt = (now - this.lastUpdateTime) / 1000
-        this.lastUpdateTime = now
-
-        console.log('dt: ', dt)
 
         // Send a game update to each player every other time
-        if (this.shouldSendUpdate) {
+        if (dt > CST.REFRESH_RATE/2000) {
             Object.keys(this.sockets).forEach(playerID => {
                 const socket = this.sockets[playerID]
 
@@ -93,10 +91,9 @@ export default class gameServer {
                 })
                 const getUpdate = this.createUpdate(updatedPlayer, otherPlayers)
                 socket.emit(eventType.SERVER_PACKET, getUpdate)
+                this.lastUpdateTime = now
             })
             this.shouldSendUpdate = false
-        } else {
-            this.shouldSendUpdate = true
         }
 
     }

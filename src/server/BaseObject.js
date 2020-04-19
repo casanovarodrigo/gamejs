@@ -10,23 +10,26 @@ export default class BaseObject {
 	}
 
 	update(dt) {
-		// const distance = this.distanceTo({ position: this.targetPosition })
-		// console.log('distance')
-		// console.log(distance)
 		// if player has to move
 		if (this.targetPosition.x && this.targetPosition.y){
 			const deltaX = this.targetPosition.x - this.position.x
 			const deltaY = this.targetPosition.y - this.position.y
 			const distance = this.distanceTo({ position: this.targetPosition })
+
+			const ratio = dt*15
 			const playerTravelDistance = distance/this.speed
-			
+
+			const velX = (deltaX/distance)*this.speed
+			const velY = (deltaY/distance)*this.speed
+
 			if (distance >= 5 && playerTravelDistance > 0.9){
-				this.position.x = this.minMaxWorldWidth(this.position.x + deltaX / playerTravelDistance)
-				this.position.y = this.minMaxWorldHeight(this.position.y + deltaY / playerTravelDistance)
+				this.updatePosition({
+					x: this.minMaxWorldWidth(this.position.x + velX * ratio),
+					y: this.minMaxWorldHeight(this.position.y + velY * ratio)
+				})
 			} else {
-				this.updateTarget({ x: null, y: null })
+				this.updateTargetPosition({ x: null, y: null })
 			}
-			
 
 			// this.position.x += dt * this.speed * ( - Math.sin(this.direction ));
     		// this.position.y -= dt * this.speed * Math.cos(this.direction);
@@ -38,17 +41,14 @@ export default class BaseObject {
 		return this
 	}
 
-	minMaxWorldWidth(value){
-		return Math.max(0, Math.min(CST.WORLD_WIDTH, value))
-	}
-
-	minMaxWorldHeight(value){
-		return Math.max(0, Math.min(CST.WORLD_HEIGHT, value))
-	}
-
-	updateTarget(targetPosition){
+	updateTargetPosition(targetPosition){
         this.targetPosition.x = targetPosition.x
         this.targetPosition.y = targetPosition.y
+	}
+
+	updatePosition(position){
+        this.position.x = position.x
+        this.position.y = position.y
     }
 
 	distanceTo(object) {
@@ -59,6 +59,14 @@ export default class BaseObject {
 
 	setDirection(dir) {
 		this.direction = dir
+	}
+
+	minMaxWorldWidth(value){
+		return Math.max(0, Math.min(CST.WORLD_WIDTH, value))
+	}
+
+	minMaxWorldHeight(value){
+		return Math.max(0, Math.min(CST.WORLD_HEIGHT, value))
 	}
 
 	serializeForUpdate() {
