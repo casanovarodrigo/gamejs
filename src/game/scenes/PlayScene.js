@@ -117,28 +117,20 @@ export class PlayScene extends Phaser.Scene {
     }
     
     clickEvent(worldX, worldY){
-        const dir = Math.atan2(this.currentPlayer.x - worldX, this.currentPlayer.y - worldY/ 2)
-        console.log("Position")
-        console.log(worldX, worldY)
-        console.log("Direction")
-        console.log(dir)
-        Networking.clickEvent(worldX, worldY, dir)
+        // console.log("click ", worldX, worldY)
+        Networking.clickEvent(worldX, worldY)
     }
     
     movePlayer(id, position){
         let player = this.playerMap[id]
         if (player){
-            let distance = Phaser.Math.Between(player.x, player.y, position.x, position.y)
-            let duration = distance * 4
-            // #1 Bug - distance traveled
-            // console.log(distance, duration)
             this.tweens.add({
                 targets: player,
                 x: position.x,
                 y: position.y,
-                duration: duration,
-                ease: 'elastic',
-                delay: 20
+                duration: 10,
+                ease: 'linear',
+                delay: 0
             })
         }
     }

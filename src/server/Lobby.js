@@ -60,26 +60,20 @@ export default (() => {
                 x: data.x,
                 y: data.y
             }
-            // if player moved
-            if (targetPosition.x !== player.position.x || targetPosition.y !== player.position.y){
-                console.log('new movement')
-                console.log('click to '+data.x+', '+data.y)
-                console.log('direction '+data.dir)
-                player.targetPosition.x = Math.max(0, Math.min(CST.WORLD_WIDTH, data.x));
-                player.targetPosition.y = Math.max(0, Math.min(CST.WORLD_HEIGHT, data.y));
-                player.direction = data.dir
-                this.updatePlayer(player)
+            if (player){
+                player.updateTarget(targetPosition)
             }
-            
             return player
         }
 
-        updatePlayer(player){
+        updatePlayer(player, dt){
             const roomId = this.getCurrentRoom()
             const room = this.rooms[roomId]
             if (room.players && room.players[player.id]){
-                room.players[player.id] = player
+                room.players[player.id] = player.update(dt)
+                return room.players[player.id]
             }
+            return player
         }
     
         addPlayerToRoom(socket){

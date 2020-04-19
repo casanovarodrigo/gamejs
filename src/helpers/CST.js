@@ -16,8 +16,8 @@ export default {
     SPRITE: {
         CAT: "cat.png"
     },
-    WORLD_WIDTH: 800,
-    WORLD_HEIGHT: 600,
+    WORLD_WIDTH: 960,
+    WORLD_HEIGHT: 960,
     GAME_STATE: {
         playerList: []
     }

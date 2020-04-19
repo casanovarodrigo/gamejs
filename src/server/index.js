@@ -53,7 +53,7 @@ export default class gameServer {
             
             // other socket events inside of newplayer event just for convenience - maybe have to change later
             // to-do then: create a function to return the player by socketID
-            setInterval(this.update.bind(this), 10000 / 60)
+            setInterval(this.update.bind(this), 1000 / 60)
         })
 
         socket.on(eventType.CLICK_EVENT, (data) => {
@@ -73,6 +73,8 @@ export default class gameServer {
         const dt = (now - this.lastUpdateTime) / 1000
         this.lastUpdateTime = now
 
+        console.log('dt: ', dt)
+
         // Send a game update to each player every other time
         if (this.shouldSendUpdate) {
             Object.keys(this.sockets).forEach(playerID => {
@@ -81,15 +83,15 @@ export default class gameServer {
                 const lobby = LobbyManager.getInstance()
                 const playerId = lobby.getPlayerIDBySocketID(playerID)
                 const allPlayers = lobby.getAllPlayersFromRoom()
-                const player = allPlayers[playerId].update(dt)
-                lobby.updatePlayer(player)
+                const player = allPlayers[playerId]
+                const updatedPlayer = lobby.updatePlayer(player, dt)
                 
                 const otherPlayersKeys = Object.keys(allPlayers).filter(id => id != playerId)
                 const otherPlayers = {}
                 otherPlayersKeys.forEach(key => {
-                    Object.assign(otherPlayers, { [key]: allPlayers[key].update(dt) })
+                    Object.assign(otherPlayers, { [key]: allPlayers[key] })
                 })
-                const getUpdate = this.createUpdate(player, otherPlayers)
+                const getUpdate = this.createUpdate(updatedPlayer, otherPlayers)
                 socket.emit(eventType.SERVER_PACKET, getUpdate)
             })
             this.shouldSendUpdate = false

@@ -16,7 +16,7 @@ const createID = () => {
 export default class Player extends BaseObject {
     constructor(socketID){
         const dir = Math.random() * 2 * Math.PI
-        const PLAYER_SPEED = 100
+        const PLAYER_SPEED = 10
         const position = {
             x: randomInt(100,700),
             y: randomInt(100,500)

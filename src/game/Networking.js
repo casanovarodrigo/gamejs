@@ -59,8 +59,8 @@ export default new class Networking {
         this.roomInfo.room = roomInfo.room
     }
 
-    clickEvent(x, y, dir){
-        this.socket.emit(eventType.CLICK_EVENT, { x, y, dir })
+    clickEvent(x, y){
+        this.socket.emit(eventType.CLICK_EVENT, { x, y })
     }
 
     getSocketID(){
