@@ -50,10 +50,8 @@ export default class gameServer {
             // emit all players only for new player
             socket.emit(eventType.ALL_PLAYERS, lobby.getAllPlayersFromRoom())
             
-            socket.broadcast.emit(eventType.NEW_PLAYER, player.serialize()) // broadcast new player location to all sockets except new player
-            
-            // other socket events inside of newplayer event just for convenience - maybe have to change later
-            // to-do then: create a function to return the player by socketID
+            socket.broadcast.emit(eventType.NEW_PLAYER, player.serializeForUpdate()) // broadcast new player location to all sockets except new player
+
             setInterval(this.update.bind(this), CST.REFRESH_RATE)
         })
 
@@ -93,7 +91,6 @@ export default class gameServer {
                 socket.emit(eventType.SERVER_PACKET, getUpdate)
                 this.lastUpdateTime = now
             })
-            this.shouldSendUpdate = false
         }
 
     }

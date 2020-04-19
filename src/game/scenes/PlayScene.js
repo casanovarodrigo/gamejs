@@ -93,6 +93,7 @@ export class PlayScene extends Phaser.Scene {
             players[player.id].setSize(40, 50).setOffset(10, 10)
             players[player.id].setCollideWorldBounds(true)
             players[player.id].socketID = Networking.getSocketID()
+            players[player.id].dir = player.dir
         })
 
         this.playerMap = Object.assign({}, this.playerMap, players)
@@ -121,23 +122,70 @@ export class PlayScene extends Phaser.Scene {
         Networking.clickEvent(worldX, worldY)
     }
     
-    movePlayer(id, position){
-        let player = this.playerMap[id]
+    movePlayer(playerParam){
+        let player = this.playerMap[playerParam.id]
         if (player){
             this.tweens.add({
                 targets: player,
-                x: position.x,
-                y: position.y,
+                x: playerParam.position.x,
+                y: playerParam.position.y,
+                // dir: playerParam.dir,
                 duration: 10,
                 ease: 'linear',
                 delay: 0
             })
+
+            player.dir = playerParam.dir
+
+            const playerMoving = !!playerParam.targetPosition.x && !!playerParam.targetPosition.y
+
+
+            if (playerMoving){
+                const dir = player.dir
+                const PI = Math.PI
+
+                if (dir >= (- (3*PI)/4) && dir <= (-PI/4)){
+                    // console.log('dooowwwn')
+                    player.setVelocityY(128)
+                    player.play("down", true)
+                } else if (dir >= (3*PI)/4 || dir < (- (3*PI)/4)){
+                    // console.log('right')
+                    player.setVelocityX(128)
+                    player.play("right", true)
+                } else if (dir <= PI/3 && dir < (3*PI)/4){
+                    // console.log('left')
+                    player.setVelocityX(-128)
+                    player.anims.playReverse("left", true)
+                } else if (dir >= ( - PI/4 ) || dir > PI/6){
+                    // console.log('uppp')
+                    player.setVelocityY(-128)
+                    player.play("up", true)
+                }
+
+                // if (dir <= (-(PI / 2))){
+                //     player.setVelocityX(128)
+                //     player.play("right", true)
+                //     // console.log('right')
+                // } else if (dir < 0){
+                //     player.setVelocityY(128)
+                //     player.play("down", true)
+                //     // console.log('down')
+                // } else if (dir < PI / 2){
+                //     // console.log('left')
+                //     player.setVelocityX(-128)
+                //     player.anims.playReverse("left", true)
+                // } else if (dir <= PI){
+                //     player.setVelocityY(-128)
+                //     player.play("up", true)
+                //     // console.log('up')
+                // }
+            }
         }
     }
 
     create() {
         
-        // this.keyboard = this.input.keyboard.addKeys("W, A, S, D")
+        this.keyboard = this.input.keyboard.addKeys("W, A, S, D")
 
         
         this.input.on("pointerdown", (pointer) => {
@@ -177,10 +225,10 @@ export class PlayScene extends Phaser.Scene {
         }
 
         // move player
-        this.movePlayer(me.id, me.position)
+        this.movePlayer(me)
         // move others
         others.forEach(otherPlayer => {
-            this.movePlayer(otherPlayer.id, otherPlayer.position)
+            this.movePlayer(otherPlayer)
         })
 
     }

@@ -15,28 +15,16 @@ const createID = () => {
 
 export default class Player extends BaseObject {
     constructor(socketID){
-        const dir = Math.random() * 2 * Math.PI
-        const PLAYER_SPEED = 10
+        const PLAYER_SPEED = 15
         const position = {
             x: randomInt(100,700),
             y: randomInt(100,500)
         }
         const id = createID()
 
-        super(id, position, dir, PLAYER_SPEED)
+        super(id, position, PLAYER_SPEED)
         this.socketID = socketID
         this.created_at = now().utc().toDate()
-    }
-
-    serialize(){
-        return {
-            id: this.id,
-            socketID: this.socketID,
-            position: {
-                x: this.position.x,
-                y: this.position.y
-            }
-        }
     }
 
     serializeForUpdate() {
