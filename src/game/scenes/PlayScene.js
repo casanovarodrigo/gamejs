@@ -161,24 +161,9 @@ export class PlayScene extends Phaser.Scene {
                     player.setVelocityY(-128)
                     player.play("up", true)
                 }
-
-                // if (dir <= (-(PI / 2))){
-                //     player.setVelocityX(128)
-                //     player.play("right", true)
-                //     // console.log('right')
-                // } else if (dir < 0){
-                //     player.setVelocityY(128)
-                //     player.play("down", true)
-                //     // console.log('down')
-                // } else if (dir < PI / 2){
-                //     // console.log('left')
-                //     player.setVelocityX(-128)
-                //     player.anims.playReverse("left", true)
-                // } else if (dir <= PI){
-                //     player.setVelocityY(-128)
-                //     player.play("up", true)
-                //     // console.log('up')
-                // }
+            } else {
+                player.setVelocityY(0)
+                player.setVelocityX(0)
             }
         }
     }
