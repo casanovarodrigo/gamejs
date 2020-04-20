@@ -160,11 +160,11 @@ export class PlayScene extends Phaser.Scene {
                     // console.log('uppp')
                     player.setVelocityY(-128)
                     player.play("up", true)
+                } else {
+                    player.setVelocityY(0)
+                    player.setVelocityX(0)
                 }
-            } else {
-                player.setVelocityY(0)
-                player.setVelocityX(0)
-            }
+            } 
         }
     }
 
