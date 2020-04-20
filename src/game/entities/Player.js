@@ -12,8 +12,9 @@ export default class Player extends CharacterSprite {
 
         this.setSize(40, 50).setOffset(10, 10)
         this.setCollideWorldBounds(true)
-        this.socketID = Networking.getSocketID()
+        this.socketID = player.socketID
         this.dir = player.dir
+        this.id = player.id
         this.setInteractive()
     }
 
