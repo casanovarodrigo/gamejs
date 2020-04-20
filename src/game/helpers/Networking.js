@@ -1,5 +1,5 @@
-import eventType from '../helpers/eventTypes'
-import { processGameUpdate } from './State'
+import eventType from '../../helpers/eventTypes'
+import { processGameUpdate } from '../State'
 
 export default new class Networking {
     constructor(){

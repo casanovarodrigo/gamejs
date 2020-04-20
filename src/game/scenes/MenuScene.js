@@ -1,5 +1,5 @@
 import CST from "../../helpers/CST"
-import Networking from "../Networking"
+import Networking from "../helpers/Networking"
 
 export class MenuScene extends Phaser.Scene {
     constructor() {

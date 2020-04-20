@@ -1,8 +1,7 @@
 import CST from "../../helpers/CST"
-import { CharacterSprite } from "../CharacterSprite"
-import { Sprite } from "../Sprite"
-import Networking from "../Networking"
-import eventType from '../../helpers/eventTypes'
+import PlayerClass from "../entities/Player"
+import Networking from "../helpers/Networking"
+import LoadAnims from '../helpers/LoadAnims'
 
 import { getCurrentState } from '../State';
 
@@ -19,66 +18,15 @@ export class PlayScene extends Phaser.Scene {
     preload() {
         Networking.connect(this)
 
-
-        this.anims.create({
-            key: "left",
-            frameRate: 10,
-            frames: this.anims.generateFrameNumbers("anna", {
-                start: 9,
-                end: 17
-            })
-        })
-
-        this.anims.create({
-            key: "down",
-            frameRate: 10,
-            frames: this.anims.generateFrameNumbers("anna", {
-                start: 18,
-                end: 26
-            })
-        })
-
-        this.anims.create({
-            key: "up",
-            frameRate: 10,
-            frames: this.anims.generateFrameNumbers("anna", {
-                start: 0,
-                end: 8
-            })
-        })
-
-        this.anims.create({
-            key: "right",
-            frameRate: 10,
-            frames: this.anims.generateFrameNumbers("anna", {
-                start: 27,
-                end: 35
-            })
-        })
-
-        this.anims.create({
-            key: "blaze",
-            duration: 50,
-            frames: this.anims.generateFrameNames("daze", {
-                prefix: "fire0",
-                suffix: ".png",
-                end: 55
-            }),
-            showOnStart: true,
-            hideOnComplete: true
-        })
-
-        this.textures.addSpriteSheetFromAtlas("mandy", { frameHeight: 64, frameWidth: 64, atlas: "characters", frame: "mandy" })
+        LoadAnims(this)
 
         this.load.image("terrain", "./public/assets/image/terrain_atlas.png")
         this.load.image("items", "./public/assets/image/items.png")
 
         this.load.tilemapTiledJSON("mappy", "./public/assets/maps/mappy.json")
-
     }
 
     addPlayers(playerList){
-        const players = {};
         // if object transform into array
         if(playerList && !Array.isArray(playerList)){
             playerList = Object.keys(playerList).map(playerId => {
@@ -86,39 +34,36 @@ export class PlayScene extends Phaser.Scene {
             })
         }
 
+        const players = {}
         playerList.forEach(player => {
-            const pX = player.position? player.position.x : player.x
-            const pY = player.position? player.position.y : player.y
-            players[player.id] = new CharacterSprite(this, pX, pY, ("anna"), 26)
-            players[player.id].setSize(40, 50).setOffset(10, 10)
-            players[player.id].setCollideWorldBounds(true)
-            players[player.id].socketID = Networking.getSocketID()
-            players[player.id].dir = player.dir
+            players[player.id] = new PlayerClass(player, this)
         })
 
-        this.playerMap = Object.assign({}, this.playerMap, players)
+        this.playerMap = Object.assign(this.playerMap, players)
 
         // set current player object
         if (!this.currentPlayer){
-            let  playerToAssign = {}
-            Object.keys(this.playerMap).forEach(key => {
-                if (this.playerMap[key].socketID === Networking.getSocketID()){
-                    playerToAssign = this.playerMap[key]
-                }
+            const socketID = Networking.getSocketID()
+            let playerId = Object.keys(this.playerMap).filter(key => {
+                return this.playerMap[key].socketID === socketID
             })
-            this.currentPlayer = playerToAssign
-            this.cameras.main.startFollow(this.currentPlayer)
+            playerId = playerId[0]? playerId[0] : null
+            if (playerId){
+                this.currentPlayer = this.playerMap[playerId]
+                this.cameras.main.startFollow(this.currentPlayer)
+            }
         }
     }
 
 
     removePlayer(playerId){
-        this.playerMap[playerId].destroy()
-        delete this.playerMap[playerId]
+        if(this.playerMap[playerId]){
+            this.playerMap[playerId].destroy()
+            delete this.playerMap[playerId]
+        }
     }
     
     clickEvent(worldX, worldY){
-        // console.log("click ", worldX, worldY)
         Networking.clickEvent(worldX, worldY)
     }
     
@@ -138,7 +83,6 @@ export class PlayScene extends Phaser.Scene {
             player.dir = playerParam.dir
 
             const playerMoving = !!playerParam.targetPosition.x && !!playerParam.targetPosition.y
-
 
             if (playerMoving){
                 const dir = player.dir
@@ -169,17 +113,19 @@ export class PlayScene extends Phaser.Scene {
     }
 
     create() {
-        
-        this.keyboard = this.input.keyboard.addKeys("W, A, S, D")
+        // this.keyboard = this.input.keyboard.addKeys("W, A, S, D")
 
-        
         this.input.on("pointerdown", (pointer) => {
             this.clickEvent(pointer.worldX, pointer.worldY)
+        })
+        
+        this.input.on("gameobjectdown", (pointer, obj) => {
+            console.log('game object dooown')
+            console.log(pointer, obj)
         })
 
 
         let mappy = this.add.tilemap("mappy")
-
         let terrain = mappy.addTilesetImage("terrain_atlas", "terrain")
         //layers
         let botLayer = mappy.createStaticLayer("bot", [terrain], 0, 0).setDepth(-1)

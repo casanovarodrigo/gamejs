@@ -2,7 +2,8 @@ export default {
     SCENES: {
         LOAD: "LOAD",
         MENU: "MENU",
-        PLAY: "PLAY"
+        PLAY: "PLAY",
+        POPMENU: "POPMENU"
     },
     IMAGE: {
         LOGO: "logo.png",
@@ -16,10 +17,10 @@ export default {
     SPRITE: {
         CAT: "cat.png"
     },
+    CHARACTERS: [
+        "anna"
+    ],
     WORLD_WIDTH: 960,
     WORLD_HEIGHT: 960,
-    GAME_STATE: {
-        playerList: []
-    },
     REFRESH_RATE: 1000 / 60
 }
